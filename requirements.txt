@@ -6,3 +6,4 @@ scipy
 pillow
 requests
 GitPython
+joblib
