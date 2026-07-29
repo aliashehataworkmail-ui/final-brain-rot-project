@@ -11,9 +11,8 @@ import os  # <-- Added os module for path checking
 def display_image_safely(image_path, width=250):
     if os.path.exists(image_path):
         st.image(image_path, width=width)
-   else:
-    st.warning("ignore")
-
+  else:
+    pass
 # Page configuration
 st.set_page_config(
     page_title="Test Yourself: Are you brain rotted?", page_icon="🧠", layout="centered"
