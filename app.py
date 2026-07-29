@@ -1,4 +1,4 @@
- import joblib
+import joblib
 model = joblib.load("model.joblib")
 import streamlit as st
 import pickle
