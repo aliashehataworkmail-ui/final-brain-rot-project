@@ -1,5 +1,4 @@
 import joblib 
-model = joblib.load("model.joblib")
 import streamlit as st
 import pickle
 import numpy as np
@@ -7,12 +6,15 @@ import pandas as pd
 import base64
 import os  # <-- Added os module for path checking
 
+model = joblib.load("model.joblib")
+
 # Helper function to safely display images
 def display_image_safely(image_path, width=250):
     if os.path.exists(image_path):
         st.image(image_path, width=width)
-  else:
-    pass
+    else:
+        pass # Silently ignores missing images without displaying warnings
+
 # Page configuration
 st.set_page_config(
     page_title="Test Yourself: Are you brain rotted?", page_icon="🧠", layout="centered"
@@ -21,7 +23,7 @@ st.set_page_config(
 # Custom CSS for styling, colors, and fonts
 st.markdown("""
     <style>
-    @import url('https://fonts.google.com/share?selection.family=Gelasio:ital,wght@0,400..700;1,400..700');
+    @import url('https://googleapis.com');
 
     html, body, [class*="css"] {
         font-family: 'Gelasio', serif;
