@@ -70,7 +70,7 @@ unsafe_allow_html=True,
 )
 
 # Initialize session state for page navigation
-if "page" not in st.session_state:
+elif "page" not in st.session_state:
 st.session_state.page = 1
 
 
