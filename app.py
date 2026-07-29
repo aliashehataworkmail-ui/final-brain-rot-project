@@ -11,9 +11,8 @@ import os  # <-- Added os module for path checking
 def display_image_safely(image_path, width=250):
     if os.path.exists(image_path):
         st.image(image_path, width=width)
-    else:
-        st.warning(f"⚠️ Image not found: `{image_path}`. Please upload it to your GitHub repository.")
-
+   else:
+    st.warning("ignore")
 
 # Page configuration
 st.set_page_config(
