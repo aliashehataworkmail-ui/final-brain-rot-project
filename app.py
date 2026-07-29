@@ -1,9 +1,13 @@
 import base64
 import pickle
+from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
+
+# Base directory relative to this script
+BASE_DIR = Path(__file__).parent
 
 # 1. Page configuration
 st.set_page_config(
@@ -59,7 +63,7 @@ html, body, [class*="css"] {
     unsafe_allow_html=True,
 )
 
-# 3. Initialize session state for page navigation (FIXED: Changed elif to if)
+# 3. Initialize session state for page navigation
 if "page" not in st.session_state:
     st.session_state.page = 1
 
@@ -72,10 +76,13 @@ def go_to_page(page_num):
 # --- PAGE 1: Welcome & About ---
 if st.session_state.page == 1:
     st.title("Test Yourself: Are you brain rotted?🧠💨")
-    try:
-        st.image("image1.png", width=250)
-    except Exception:
-        st.warning("image1.png not found in repository.")
+
+    # Dynamic path handling for image1 (1).png
+    img1_path = BASE_DIR / "image1 (1).png"
+    if img1_path.exists():
+        st.image(str(img1_path), width=250)
+    else:
+        st.warning(f"File not found: {img1_path.name}")
 
     st.markdown("### About Section")
     st.write(
@@ -218,11 +225,10 @@ elif st.session_state.page == 3:
             col for col in model_columns if col not in target_column
         ]
 
-        # 2. Get user input saved from Page 2
+        # Get user input saved from Page 2
         user_inputs = st.session_state.get("input_data", {})
 
         if user_inputs:
-            # 3. Build a raw dataframe using exact keys saved in session state
             input_data_raw = pd.DataFrame(
                 [
                     [
@@ -254,10 +260,10 @@ elif st.session_state.page == 3:
                 ],
             )
 
-            # 4. Apply get_dummies to encode gender and region
+            # Apply get_dummies to encode gender and region
             input_encoded = pd.get_dummies(input_data_raw)
 
-            # 5. Reindex to match the exact training columns
+            # Reindex to match the exact training columns
             input_final = input_encoded.reindex(
                 columns=model_columns, fill_value=0
             )
@@ -275,21 +281,21 @@ elif st.session_state.page == 3:
     # Display Score Big
     st.markdown(f"# **{score}**")
 
+    # Image Paths for Results
+    img2_path = BASE_DIR / "image2 (1).png"
+    img3_path = BASE_DIR / "image3 (1).png"
+
     # Brain rot message logic based on score
     if score > 50:
         st.error("Unfortunately you ARE brain rotted🧠 👻")
-        try:
-            st.image("image3.png", width=250)
-        except Exception:
-            pass
+        if img3_path.exists():
+            st.image(str(img3_path), width=250)
     else:
         st.success(
             "You are safe! Your brain is clean of major digital rot 🧘‍♂️"
         )
-        try:
-            st.image("image2.png", width=250)
-        except Exception:
-            pass
+        if img2_path.exists():
+            st.image(str(img2_path), width=250)
 
     st.write("")
     if st.button("🔄 Take Test Again"):
