@@ -5,7 +5,14 @@ import pickle
 import numpy as np
 import pandas as pd
 import base64
+import os  # <-- Added os module for path checking
 
+# Helper function to safely display images
+def display_image_safely(image_path, width=250):
+    if os.path.exists(image_path):
+        st.image(image_path, width=width)
+    else:
+        st.warning(f"⚠️ Image not found: `{image_path}`. Please upload it to your GitHub repository.")
 
 
 # Page configuration
@@ -28,7 +35,7 @@ st.markdown("""
         color: #f8f5f0;
     }
 
-    #/* Style buttons to look sleek and modern */
+    /* Style buttons to look sleek and modern */
     .stButton>button {
         background: linear-gradient(45deg, #FF4B4B, #FF914D);
         color: white;
@@ -81,9 +88,9 @@ def go_to_page(page_num):
 # --- PAGE 1: Welcome & About ---
 if st.session_state.page == 1:
   st.title("Test Yourself: Are you brain rotted?🧠💨")
-  st.image(
-    "image1.png", width=250
-)
+  
+  # Safely load image 1
+  display_image_safely("image1.png", width=250)
 
   st.markdown("### About Section")
   st.write(
@@ -174,8 +181,6 @@ elif st.session_state.page == 2:
     submitted = st.form_submit_button("Predict my digital dependency score")
 
     if submitted:
-      # Store inputs in session state to use on page 3
-      # Note: Ensure the features match what your trained model expects!
       st.session_state.input_data = {
           "age": age,
           "gender": gender,
@@ -190,7 +195,6 @@ elif st.session_state.page == 2:
           "productivity_score": productivity,
       }
       go_to_page(3)
-
 
 
 # --- PAGE 3: Results ---
@@ -211,10 +215,8 @@ elif st.session_state.page == 3:
     target_column = ["digital_dependence_score"]
     model_columns = [col for col in model_columns if col not in target_column]
 
-    # 2. Get user input saved from Page 2
     user_inputs = st.session_state.input_data
 
-    # 3. Build a raw dataframe using the exact keys saved in session state
     input_data_raw = pd.DataFrame(
         [
             [
@@ -246,16 +248,10 @@ elif st.session_state.page == 3:
         ],
     )
 
-    # 4. Apply get_dummies to encode gender and region
     input_encoded = pd.get_dummies(input_data_raw)
-
-    # 5. Reindex to match the exact training columns (fills missing dummy columns with 0)
     input_final = input_encoded.reindex(columns=model_columns, fill_value=0)
-
-    # CRITICAL: Scale the user input using the exact same scaler from training!
     input_scaled = scaler.transform(input_final)
 
-    # Predict score
     prediction = model.predict(input_scaled)[0]
     score = round(prediction, 2)
 
@@ -269,14 +265,12 @@ elif st.session_state.page == 3:
   # Brain rot message logic based on score
   if score > 50:
     st.error("unfortunately you ARE brain rotted🧠 👻")
-    st.image(
-    "image3.png", width=250
-)
+    # Safely load image 3
+    display_image_safely("image3.png", width=250)
   else:
     st.success("You are safe! Your brain is clean of major digital rot 🧘‍♂️")
-    st.image(
-    "image2.png", width=250
-)
+    # Safely load image 2
+    display_image_safely("image2.png", width=250)
 
   st.write("")
   if st.button("🔄 Take Test Again"):
